@@ -55,6 +55,4 @@ public class ClickService {
                     return click;
                 });
     }
-
-
 }
