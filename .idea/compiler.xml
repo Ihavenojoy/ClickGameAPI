@@ -6,6 +6,9 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="business" />
+        <module name="dal" />
+        <module name="api" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -16,6 +19,9 @@
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Bussines_Layer" options="-parameters" />
       <module name="ClickerAPI" options="" />
+      <module name="api" options="-parameters" />
+      <module name="business" options="-parameters" />
+      <module name="dal" options="-parameters" />
     </option>
   </component>
 </project>

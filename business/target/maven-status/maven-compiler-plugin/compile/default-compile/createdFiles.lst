@@ -1,0 +1,8 @@
+com\example\Model\Building.class
+com\example\Services\UserService.class
+com\example\Model\User.class
+com\example\Services\StoreService.class
+com\example\Model\Click.class
+com\example\Mapper\UserMapper.class
+com\example\Services\ClickService.class
+com\example\Mapper\ClickMapper.class
