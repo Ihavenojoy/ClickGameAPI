@@ -10,44 +10,70 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ClickService {
+
     @Autowired
     private DragonFlyServices dragonFlyServices;
-    private final String ClickKey = "ClickUserID";
 
+    private final String ClickKey = "ClickUserID";  // Consistent save type for Click objects
 
+    // Handle click operation asynchronously for a given user
     @Async
     public CompletableFuture<Click> handleClickedAsync(int userid) {
         long startTime = System.currentTimeMillis();
         String userKey = Integer.toString(userid);
 
-        // 🔹 Step 1: Retrieve Click object from memory asynchronously
+        // 🔹 Step 1: Retrieve Click object from Redis asynchronously
         return dragonFlyServices.ClickFromMemory(userKey, ClickKey)
-                .thenCompose(ClickMapper::ToClick) // Ensures async JSON conversion
-                .thenApplyAsync(click -> {
+                .thenCompose(this::toClick)  // Convert the JSON string to Click object
+                .thenComposeAsync(click -> {
                     if (click != null) {
-                        click.Clicked(); // Mutates the click object
+                        return click.Clicked()  // Perform the async click operation
+                                .thenApplyAsync(aVoid -> click);  // Return the click after the Clicked() method
                     }
-                    return click;
+                    return CompletableFuture.completedFuture(click);  // Skip if click is null
                 })
                 .thenComposeAsync(click -> {
                     if (click != null) {
-                        return ClickMapper.ToJson(click)
-                                .thenCompose(json -> dragonFlyServices.ClickToMemory(userKey, ClickKey, json));
+                        // Convert the Click object to JSON and save it back to Redis
+                        return toJson(click)
+                                .thenCompose(json -> {
+                                    // Save updated Click object to Redis, returning a CompletableFuture<Boolean>
+                                    return dragonFlyServices.ClickToMemory(userKey, ClickKey, json)
+                                            .thenApply(success -> {
+                                                if (success) {
+                                                    return click;  // Return the updated Click object if saving was successful
+                                                } else {
+                                                    // Handle failure: return default click or log error as needed
+                                                    return new Click();  // Return a default Click object if saving failed
+                                                }
+                                            });
+                                });
                     }
-                    return null;
+                    return CompletableFuture.completedFuture(click);  // If click is null, skip saving
                 })
-                .thenApplyAsync(v -> {
+                .thenApplyAsync(click -> {
                     System.out.println("Click operation took: " + (System.currentTimeMillis() - startTime) + " ms");
-                    return null;
+                    return click;  // Return the updated Click object
                 });
     }
 
+    // Convert the Click object to JSON asynchronously (using ClickMapper's ToJson method)
+    public CompletableFuture<String> toJson(Click click) {
+        return ClickMapper.ToJson(click);
+    }
+
+    // Convert JSON string back to Click object asynchronously (using ClickMapper's ToClick method)
+    public CompletableFuture<Click> toClick(String json) {
+        return ClickMapper.ToClick(json);
+    }
+
+    // Handle the startup request to get Click object from Redis asynchronously
     @Async
     public CompletableFuture<Click> StartUpRequest(int userid) {
         String userKey = Integer.toString(userid);
 
-        // 🔹 Step 1: Retrieve Click object from memory asynchronously
+        // Retrieve Click object from Redis and convert it asynchronously
         return dragonFlyServices.ClickFromMemory(userKey, ClickKey)
-                .thenCompose(ClickMapper::ToClick); // Ensures async JSON conversion
+                .thenCompose(ClickMapper::ToClick); // Convert JSON to Click asynchronously
     }
 }

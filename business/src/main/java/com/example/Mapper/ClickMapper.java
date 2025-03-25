@@ -1,6 +1,7 @@
 package com.example.Mapper;
 
 import com.example.Model.Click;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
@@ -8,7 +9,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class ClickMapper {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper objectMapper = new ObjectMapper()
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     // Method to convert Click object to JSON String
     public static CompletableFuture<String> ToJson(Click click) {

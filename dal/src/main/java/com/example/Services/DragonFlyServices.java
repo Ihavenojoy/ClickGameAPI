@@ -10,39 +10,47 @@ import java.util.concurrent.CompletableFuture;
 
 @Service
 public class DragonFlyServices {
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate; // Use String type for both key and value
 
-    public DragonFlyServices(RedisTemplate<String, Object> redisTemplate) {
+    public DragonFlyServices(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 
-    // ✅ Correcte methode om op te slaan
     @Async
-    public CompletableFuture<Void> ClickToMemory(String key, String saveType, String jsonClick) {
-        return CompletableFuture.runAsync(() -> {
-            String finalKey = saveType + ": " + key;
-            System.out.println(finalKey);
-            System.out.println("💾 Storing in Redis: " + finalKey + " -> " + jsonClick);
-            redisTemplate.opsForValue().set(finalKey, jsonClick);
+    public CompletableFuture<Boolean> ClickToMemory(String key, String saveType, String jsonClick) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                // Create the final key for Redis
+                String finalKey = saveType + ": " + key; // finalKey like "ClickUserID: 3"
+                System.out.println("💾 Storing in Redis: " + finalKey + " -> " + jsonClick);
+
+                // Store the value (jsonClick) as a plain string with the finalKey
+                redisTemplate.opsForValue().set(finalKey, jsonClick);
+                System.out.println("✅ Data stored in Redis with key: " + finalKey);
+
+                return true;  // Return true if the data is successfully stored
+            } catch (Exception e) {
+                System.err.println("⚠️ Error storing data in Redis: " + e.getMessage());
+                e.printStackTrace();
+                return false;  // Return false if there is an error
+            }
         });
     }
 
-    // ✅ Correcte methode om op te halen
     @Async
     public CompletableFuture<String> ClickFromMemory(String key, String saveType) {
         return CompletableFuture.supplyAsync(() -> {
             String finalKey = saveType + ": " + key;
-            Object json = redisTemplate.opsForValue().get(finalKey);
-            System.out.println("✅ Retrieved from Redis: " + json.toString());
+            System.out.println("🔑 Retrieving from Redis with key: " + finalKey);
+            String json = redisTemplate.opsForValue().get(finalKey);
 
             if (json == null) {
                 System.out.println("⚠️ No data found for key: " + finalKey);
-                return "{}"; // Prevent null pointer errors
+                return "{}"; // Return default empty JSON
             }
 
-
-            return json.toString();
+            System.out.println("✅ Retrieved from Redis: " + json);
+            return json;
         });
     }
 }
-

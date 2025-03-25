@@ -20,12 +20,10 @@ public class Click {
 
     public Click() {}
 
-    @JsonCreator
-    public Click(
-            @JsonProperty("Click_Value") int clickvalue,
-            @JsonProperty("ClicksClicks") double clickbonus,
-            @JsonProperty("CritChange") double critechange,
-            @JsonProperty("Crit") boolean crit) {
+    public Click(@JsonProperty("Click_Value") int clickvalue,
+                 @JsonProperty("ClicksClicks") double clickbonus,
+                 @JsonProperty("CritChange") double critechange,
+                 @JsonProperty("Crit") boolean crit) {
         this.clickvalue = clickvalue;
         this.clickbonus = clickbonus;
         this.critechange = critechange;
@@ -35,13 +33,10 @@ public class Click {
     @Async
     public CompletableFuture<Void> Clicked() {
         double randomValue = Math.random() * 100;
-        if (randomValue < critechange)
-        {
+        if (randomValue < critechange) {
             crit = true;
             clickvalue += Math.floor(clickbonus * 2);
-        }
-        else
-        {
+        } else {
             crit = false;
             clickvalue += clickbonus;
         }
@@ -59,4 +54,14 @@ public class Click {
 
     public boolean isCrit() { return crit; }
     public void setCrit(boolean crit) { this.crit = crit; }
+
+    @Override
+    public String toString() {
+        return "Click{" +
+                "clickvalue=" + clickvalue +
+                ", clickbonus=" + clickbonus +
+                ", critechange=" + critechange +
+                ", crit=" + crit +
+                '}';
+    }
 }
