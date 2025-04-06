@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
 @EnableAsync
-public class DragonFlyConfiguration {
+public class DragonflyConfiguration {
     @Bean
     public LettuceConnectionFactory DragonFlyConnectionFactory() {
         final RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();

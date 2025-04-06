@@ -1,18 +1,14 @@
-package com.example.Model;
-import com.fasterxml.jackson.annotation.JsonCreator;
+package com.example.Models;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.springframework.scheduling.annotation.Async;
-
-import java.util.concurrent.CompletableFuture;
 
 public class User {
-    @JsonProperty("ID")
-    public int id;
-    @JsonProperty("Name")
-    public String name;
-    @JsonProperty("Email")
-    public String email;
 
+  @JsonProperty("ID")
+    private int id;
+    @JsonProperty("Name")
+    private String name;
+    @JsonProperty("Email")
+    private String email;
     public User(int id, String name, String email) {
         this.id = id;
         this.name = name;

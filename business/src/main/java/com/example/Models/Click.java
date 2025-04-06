@@ -1,5 +1,4 @@
-package com.example.Model;
-import com.fasterxml.jackson.annotation.JsonCreator;
+package com.example.Models;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.scheduling.annotation.Async;
 

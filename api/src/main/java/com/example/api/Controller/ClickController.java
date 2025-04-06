@@ -2,7 +2,7 @@ package com.example.api.Controller;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import com.example.Model.Click;
+import com.example.Models.Click;
 import com.example.Services.ClickService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

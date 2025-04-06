@@ -1,6 +1,6 @@
-package com.example.Mapper;
+package com.example.Mappers;
 
-import com.example.Model.Click;
+import com.example.Models.Click;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.JsonProcessingException;

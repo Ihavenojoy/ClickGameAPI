@@ -1,6 +1,6 @@
-package com.example.Mapper;
+package com.example.Mappers;
 
-import com.example.Model.User;
+import com.example.Models.User;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.concurrent.CompletableFuture;

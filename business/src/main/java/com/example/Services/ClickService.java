@@ -1,7 +1,8 @@
 package com.example.Services;
 
-import com.example.Mapper.ClickMapper;
-import com.example.Model.Click;
+import com.example.Interfaces.IDragonfly;
+import com.example.Mappers.ClickMapper;
+import com.example.Models.Click;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -12,7 +13,7 @@ import java.util.concurrent.CompletableFuture;
 public class ClickService {
 
     @Autowired
-    private DragonFlyServices dragonFlyServices;
+    private IDragonfly dragonFlyServices;
 
     private final String ClickKey = "ClickUserID";  // Consistent save type for Click objects
 

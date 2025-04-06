@@ -1,7 +1,6 @@
 package com.example.Services;
 
-import jakarta.annotation.PostConstruct;
-import org.springframework.data.redis.core.ListOperations;
+import com.example.Interfaces.IDragonfly;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -9,10 +8,10 @@ import org.springframework.stereotype.Service;
 import java.util.concurrent.CompletableFuture;
 
 @Service
-public class DragonFlyServices {
+public class IDragonflyServices implements IDragonfly {
     private final RedisTemplate<String, String> redisTemplate; // Use String type for both key and value
 
-    public DragonFlyServices(RedisTemplate<String, String> redisTemplate) {
+    public IDragonflyServices(RedisTemplate<String, String> redisTemplate) {
         this.redisTemplate = redisTemplate;
     }
 

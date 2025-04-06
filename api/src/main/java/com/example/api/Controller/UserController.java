@@ -1,9 +1,10 @@
 package com.example.api.Controller;
 
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
-import com.example.Model.User;
+import com.example.Models.User;
 import com.example.Services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -26,6 +27,11 @@ public class UserController {
     public User login(@RequestParam String email, @RequestParam String password) {
         User user = new User(0, "Unkown", "Unkown");
         return user;
+    }
+
+    @GetMapping("/Register")
+    public CompletableFuture<User> Register(@RequestParam String email, @RequestParam String password) {
+        return userService.Register("Test","Test@gmail.com","Testpassword","Testpassword");
     }
 }
 

@@ -1,2 +1,3 @@
-com\example\Services\DragonFlyServices.class
-com\example\Configuration\DragonFlyConfiguration.class
+com\example\Services\IDragonflyServices.class
+com\example\Configuration\DragonflyConfiguration.class
+com\example\Configuration\HibernateConfiguration.class
