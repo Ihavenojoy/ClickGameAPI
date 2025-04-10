@@ -16,15 +16,15 @@ public class IDragonflyServices implements IDragonfly {
     }
 
     @Async
-    public CompletableFuture<Boolean> ClickToMemory(String key, String saveType, String jsonClick) {
+    public CompletableFuture<Boolean> ToMemory(String key, String saveType, String json) {
         return CompletableFuture.supplyAsync(() -> {
             try {
                 // Create the final key for Redis
                 String finalKey = saveType + ": " + key; // finalKey like "ClickUserID: 3"
-                System.out.println("💾 Storing in Redis: " + finalKey + " -> " + jsonClick);
+                System.out.println("💾 Storing in Redis: " + finalKey + " -> " + json);
 
                 // Store the value (jsonClick) as a plain string with the finalKey
-                redisTemplate.opsForValue().set(finalKey, jsonClick);
+                redisTemplate.opsForValue().set(finalKey, json);
                 System.out.println("✅ Data stored in Redis with key: " + finalKey);
 
                 return true;  // Return true if the data is successfully stored
@@ -37,7 +37,7 @@ public class IDragonflyServices implements IDragonfly {
     }
 
     @Async
-    public CompletableFuture<String> ClickFromMemory(String key, String saveType) {
+    public CompletableFuture<String> FromMemory(String key, String saveType) {
         return CompletableFuture.supplyAsync(() -> {
             String finalKey = saveType + ": " + key;
             System.out.println("🔑 Retrieving from Redis with key: " + finalKey);

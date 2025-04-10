@@ -24,7 +24,7 @@ public class ClickService {
         String userKey = Integer.toString(userid);
 
         // 🔹 Step 1: Retrieve Click object from Redis asynchronously
-        return dragonFlyServices.ClickFromMemory(userKey, ClickKey)
+        return dragonFlyServices.FromMemory(userKey, ClickKey)
                 .thenCompose(this::toClick)  // Convert the JSON string to Click object
                 .thenComposeAsync(click -> {
                     if (click != null) {
@@ -39,7 +39,7 @@ public class ClickService {
                         return toJson(click)
                                 .thenCompose(json -> {
                                     // Save updated Click object to Redis, returning a CompletableFuture<Boolean>
-                                    return dragonFlyServices.ClickToMemory(userKey, ClickKey, json)
+                                    return dragonFlyServices.ToMemory(userKey, ClickKey, json)
                                             .thenApply(success -> {
                                                 if (success) {
                                                     return click;  // Return the updated Click object if saving was successful
@@ -74,7 +74,7 @@ public class ClickService {
         String userKey = Integer.toString(userid);
 
         // Retrieve Click object from Redis and convert it asynchronously
-        return dragonFlyServices.ClickFromMemory(userKey, ClickKey)
+        return dragonFlyServices.FromMemory(userKey, ClickKey)
                 .thenCompose(ClickMapper::ToClick); // Convert JSON to Click asynchronously
     }
 }

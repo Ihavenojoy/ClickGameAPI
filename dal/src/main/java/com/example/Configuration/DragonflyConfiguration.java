@@ -10,7 +10,6 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.scheduling.annotation.EnableAsync;
 
 @Configuration
-@EnableAsync
 public class DragonflyConfiguration {
     @Bean
     public LettuceConnectionFactory DragonFlyConnectionFactory() {

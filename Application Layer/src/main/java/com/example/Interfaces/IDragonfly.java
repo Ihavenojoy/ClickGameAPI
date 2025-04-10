@@ -3,6 +3,6 @@ package com.example.Interfaces;
 import java.util.concurrent.CompletableFuture;
 
 public interface IDragonfly {
-    public CompletableFuture<Boolean> ClickToMemory(String key, String saveType, String jsonClick);
-    public CompletableFuture<String> ClickFromMemory(String key, String saveType);
+    public CompletableFuture<Boolean> ToMemory(String key, String saveType, String jsonClick);
+    public CompletableFuture<String> FromMemory(String key, String saveType);
 }

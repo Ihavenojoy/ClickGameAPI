@@ -5,6 +5,7 @@ import com.example.DTO.UserRegistrationDTO;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+@org.springframework.context.annotation.Configuration
 
 public class HibernateConfiguration {
     private static SessionFactory factory;
