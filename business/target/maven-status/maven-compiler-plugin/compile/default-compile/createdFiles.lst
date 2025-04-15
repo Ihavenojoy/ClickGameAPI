@@ -1,3 +1,5 @@
+com\example\Services\BuildingService.class
+com\example\Services\ImageService.class
 com\example\Services\UserService.class
 com\example\Models\Building.class
 com\example\Models\UserRegistration.class

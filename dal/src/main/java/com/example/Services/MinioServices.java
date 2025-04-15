@@ -3,6 +3,7 @@ package com.example.Services;
 import com.example.Configuration.MinIOProperties;
 import com.example.Interfaces.IMinIO;
 import jakarta.validation.groups.Default;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -22,26 +23,10 @@ public class MinioServices implements IMinIO {
     private final MinIOProperties minioProperties;
     private String bucketName;
 
-    // Constructor injection of MinIOProperties
-    public MinioServices(MinIOProperties minioProperties) {
+    @Autowired
+    public MinioServices(S3Client s3Client, MinIOProperties minioProperties) {
+        this.s3Client = s3Client;
         this.minioProperties = minioProperties;
-
-        // Validate access key and secret key
-        if (minioProperties.getAccessKey() == null || minioProperties.getAccessKey().isEmpty()) {
-            throw new IllegalArgumentException("Access key cannot be blank.");
-        }
-        if (minioProperties.getSecretKey() == null || minioProperties.getSecretKey().isEmpty()) {
-            throw new IllegalArgumentException("Secret key cannot be blank.");
-        }
-
-        // Initialize MinIO client
-        this.s3Client = S3Client.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(minioProperties.getAccessKey(), minioProperties.getSecretKey())))
-                .endpointOverride(URI.create(minioProperties.getEndpoint()))
-                .region(Region.of(minioProperties.getRegion()))
-                .build();
-
         createBucketIfNotExists();
     }
 

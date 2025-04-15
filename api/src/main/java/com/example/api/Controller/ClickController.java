@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = "http://localhost:3000") //Premision from port to be allowed in
+@CrossOrigin(origins = {"http://localhost:3000", "https://localhost:3000"})
 @RestController
 @RequestMapping("/api")
 public class ClickController {
