@@ -1,4 +1,4 @@
-package com.example.api.Controller;
+package com.example.api.controller;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 
@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.*;
 
-@CrossOrigin(origins = {"http://localhost:3000", "https://localhost:3000"})
 @RestController
 @RequestMapping("/api")
 public class ClickController {
@@ -22,13 +21,18 @@ public class ClickController {
         this.asyncExecutor = asyncExecutor;
     }
 
-    @GetMapping("/click")
-    public CompletableFuture<Click> Clicked(@RequestParam int userid) {
+    @GetMapping("/click/{userid}")
+    public CompletableFuture<Click> Clicked(@PathVariable  int userid) {
         return clickService.handleClickedAsync(userid);
     }
 
     @GetMapping("/start")
     public CompletableFuture<Click> Start(@RequestParam int userid) {
         return clickService.StartUpRequest(userid);
+    }
+
+    @GetMapping("/test")
+    public String test() {
+        return "Controller is working!";
     }
 }
