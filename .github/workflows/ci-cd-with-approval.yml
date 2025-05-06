@@ -1,0 +1,118 @@
+name: CI/CD with Manual Confirmation on Failures
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  # OSV Scanner
+  osv-scanner:
+    name: Run OSV Scanner
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run OSV Scanner
+        uses: google/osv-scanner-action@v1.7.1
+        with:
+          scan-args: --output=results.sarif
+
+  # Apisec Scan
+  apisec-scan:
+    name: Run Apisec Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Apisec Scan
+        uses: apisec-inc/apisec-run-scan@025432089674a28ba8fb55f8ab06c10215e772ea
+        with:
+          apisec-project: VAmPI
+          sarif-result-file: apisec-results.sarif
+          apisec-profile: Master
+          apisec-oas: false
+
+  # Dependency Review
+  dependency-review:
+    name: Run Dependency Review
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Run Dependency Review
+        uses: github/dependency-review-action@v2
+        with:
+          output-file: dependency-review-results.sarif
+
+  # CodeQL Scan
+  codeql-scan:
+    name: Run CodeQL Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up CodeQL
+        uses: github/codeql-action/setup-codeql@v2
+
+      - name: Run CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+
+  # Check Failures (Custom logic to check if any job failed)
+  check-failures:
+    name: Check for Failures
+    needs: [osv-scanner, apisec-scan, dependency-review, codeql-scan]
+    runs-on: ubuntu-latest
+    if: ${{ needs.osv-scanner.result == 'failure' || needs.apisec-scan.result == 'failure' || needs.dependency-review.result == 'failure' || needs.codeql-scan.result == 'failure' }}
+    steps:
+      - name: Report Failures
+        run: |
+          echo "Some workflows failed. Please review the logs:"
+          
+          if [[ "${{ needs.osv-scanner.result }}" == "failure" ]]; then
+            echo "OSV Scanner failed"
+          fi
+          
+          if [[ "${{ needs.apisec-scan.result }}" == "failure" ]]; then
+            echo "Apisec Scan failed"
+          fi
+          
+          if [[ "${{ needs.dependency-review.result }}" == "failure" ]]; then
+            echo "Dependency Review failed"
+          fi
+          
+          if [[ "${{ needs.codeql-scan.result }}" == "failure" ]]; then
+            echo "CodeQL Scan failed"
+          fi
+
+  # Wait for Manual Approval before Deploying (if there are failures)
+  wait-for-approval:
+    name: Wait for Approval
+    needs: check-failures
+    runs-on: ubuntu-latest
+    environment: production  # This environment requires manual approval
+    if: ${{ failure() }}
+    steps:
+      - name: Request Manual Approval
+        run: |
+          echo "You need to manually approve this push due to failures above."
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  # Deploy (Only runs after approval)
+  deploy:
+    name: Deploy
+    needs: wait-for-approval
+    runs-on: ubuntu-latest
+    if: ${{ success() }}
+    steps:
+      - name: Deploy Application
+        run: |
+          echo "Deploying application..."
