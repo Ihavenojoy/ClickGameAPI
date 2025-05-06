@@ -1,22 +1,17 @@
-# Use Maven with JDK 21 to build the app
+# Build stage
 FROM maven:3.9.5-eclipse-temurin-21 AS builder
-WORKDIR /app
+WORKDIR /build
 
-# Copy all project files
+# Copy everything and build only the API module
 COPY . .
+RUN mvn clean install -pl api -am -DskipTests
 
-# Build with Maven (skip tests for faster build)
-RUN mvn clean package -DskipTests
-
-# Use JRE base image for runtime (Java 21)
+# Runtime stage
 FROM eclipse-temurin:21-jre
 WORKDIR /app
 
-# Copy built JAR from builder stage
-COPY --from=builder /app/api/target/*.jar app.jar
+# Copy only the Spring Boot executable jar
+COPY --from=builder /build/api/target/api-0.0.1-SNAPSHOT.jar app.jar
 
-# Expose app port (adjust if needed)
 EXPOSE 8080
-
-# Run the Spring Boot app
 ENTRYPOINT ["java", "-jar", "app.jar"]
