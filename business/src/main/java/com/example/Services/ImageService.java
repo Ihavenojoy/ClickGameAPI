@@ -36,19 +36,13 @@ public class ImageService {
     }
 
     public List<byte[]> getAllUserImages(String folderPrefix) throws Exception {
-        // First, get all the image file names in the specified folder
         List<String> imageNames = minioService.getImageNames(UserBucketName, folderPrefix);
 
-        // List to hold the byte arrays of all images
         List<byte[]> imageBytesList = new ArrayList<>();
 
-        // For each image, get the file as bytes and add to the list
         for (String imageName : imageNames) {
-            // Build the correct key by prepending the userId and the folderPrefix
             String objectKey = folderPrefix + "/" + imageName;
-
-            // Get the image as bytes using the full object key
-            byte[] imageBytes = minioService.getFile(objectKey, UserBucketName);  // Get the image as bytes
+            byte[] imageBytes = minioService.getFile(objectKey, UserBucketName);
             imageBytesList.add(imageBytes);
         }
 

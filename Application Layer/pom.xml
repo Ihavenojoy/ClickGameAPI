@@ -19,20 +19,6 @@
 
     <dependencies>
         <!-- DAL Layer Dependency -->
-
-        <!-- Core Jackson Library for simple conversion of object to JSON-->
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.18.2</version>
-        </dependency>
-
-        <!-- expansion Jackson library for more datatypes -->
-        <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.18.2</version>
-        </dependency>
         <dependency>
             <groupId>jakarta.persistence</groupId>
             <artifactId>jakarta.persistence-api</artifactId>

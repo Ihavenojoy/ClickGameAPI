@@ -58,13 +58,11 @@ public class ClickService {
                 });
     }
 
-    // Convert the Click object to JSON asynchronously (using ClickMapper's ToJson method)
-    public CompletableFuture<String> toJson(Click click) {
+    private CompletableFuture<String> toJson(Click click) {
         return ClickMapper.ToJson(click);
     }
 
-    // Convert JSON string back to Click object asynchronously (using ClickMapper's ToClick method)
-    public CompletableFuture<Click> toClick(String json) {
+    private CompletableFuture<Click> toClick(String json) {
         return ClickMapper.ToClick(json);
     }
 

@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 public class UserService {
     private final IUser Userservice;
 
-    @Autowired  // Add this annotation for Spring to inject the IUser dependency
+    @Autowired
     public UserService(IUser Userservice) {
         this.Userservice = Userservice;
     }
