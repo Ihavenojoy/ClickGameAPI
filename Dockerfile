@@ -1,23 +1,22 @@
-# Use the official .NET SDK image to build the app
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
+# Use Maven to build the project
+FROM maven:3.9.5-eclipse-temurin-17 AS builder
 WORKDIR /app
 
-# Copy .csproj and restore dependencies
-COPY *.sln .
-COPY ClickGameAPI/*.csproj ./ClickGameAPI/
-RUN dotnet restore
-
-# Copy the rest of the source code
+# Copy project files
 COPY . .
-WORKDIR /app/ClickGameAPI
-RUN dotnet publish -c Release -o /out
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS runtime
+# Build the application
+RUN mvn clean package -DskipTests
+
+# Use JRE base image to run the app
+FROM eclipse-temurin:17-jre
 WORKDIR /app
-COPY --from=build /out ./
 
-# Expose port 80 (or your API port)
-EXPOSE 80
+# Copy built JAR from the builder
+COPY --from=builder /app/target/*.jar app.jar
 
-ENTRYPOINT ["dotnet", "ClickGameAPI.dll"]
+# Expose app port (change this if your app uses a different port)
+EXPOSE 8080
+
+# Run the Spring Boot app
+ENTRYPOINT ["java", "-jar", "app.jar"]
