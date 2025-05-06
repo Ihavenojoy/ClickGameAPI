@@ -92,26 +92,13 @@ jobs:
             echo "CodeQL Scan failed"
           fi
 
-  # Wait for Manual Approval before Deploying (if there are failures)
-  wait-for-approval:
-    name: Wait for Approval
-    needs: check-failures
-    runs-on: ubuntu-latest
-    environment: production  # This environment requires manual approval
-    if: ${{ failure() }}
-    steps:
-      - name: Request Manual Approval
-        run: |
-          echo "You need to manually approve this push due to failures above."
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   # Deploy (Only runs after approval)
   deploy:
     name: Deploy
-    needs: wait-for-approval
+    needs: check-failures
     runs-on: ubuntu-latest
-    if: ${{ success() }}
+    if: ${{ needs.check-failures.result == 'failure' }}  # Only deploy if failures detected
+    environment: production  # Manual approval required here
     steps:
       - name: Deploy Application
         run: |
