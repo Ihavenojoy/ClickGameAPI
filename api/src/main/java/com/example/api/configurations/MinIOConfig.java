@@ -38,5 +38,6 @@ public class MinIOConfig {
                         .build())
                 .httpClientBuilder(UrlConnectionHttpClient.builder())
                 .build();
+
     }
 }
