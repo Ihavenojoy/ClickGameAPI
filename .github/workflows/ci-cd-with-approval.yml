@@ -18,7 +18,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Run OSV Scanner
-        uses: google/osv-scanner-action@v1.7.1
+        uses: google/osv-scanner-action@v1
         with:
           scan-args: --output=results.sarif
 
