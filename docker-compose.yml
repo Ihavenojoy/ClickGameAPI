@@ -11,6 +11,12 @@ services:
       MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
       MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
     command: server /data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
 
   java-app:
     image: your-java-app
@@ -30,8 +36,12 @@ services:
       - minio_secret_key.txt
     ports:
       - "8080:8080"
-
-
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
 
   dragonfly:
     image: dragonflyio/dragonfly
@@ -58,6 +68,12 @@ services:
       - "${MYSQL_PORT}:${MYSQL_PORT}"
     volumes:
       - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      retries: 3
+      start_period: 10s
+      timeout: 10s
 
 secrets:
   keystore.p12:
