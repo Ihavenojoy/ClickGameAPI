@@ -1,6 +1,0 @@
-com\example\Configuration\DragonflyConfiguration.class
-com\example\Services\MinioServices.class
-com\example\Configuration\MinIOProperties.class
-com\example\Services\IDragonflyServices.class
-com\example\Services\UserServices.class
-com\example\Configuration\HibernateConfiguration.class
