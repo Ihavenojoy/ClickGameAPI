@@ -23,12 +23,14 @@ services:
       - .env
     environment:
       SSL_KEYSTORE_PASSWORD: ${SSL_KEYSTORE_PASSWORD}
+      SPRING_PROFILES_ACTIVE: docker
     secrets:
       - keystore.p12
       - minio_access_key.txt
       - minio_secret_key.txt
     ports:
       - "8080:8080"
+
 
 
   dragonfly:

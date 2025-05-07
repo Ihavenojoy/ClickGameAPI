@@ -6,11 +6,14 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 import java.util.Objects;
 
 @Configuration
+@Profile("!docker")
 public class DotenvConfig {
+
 
     public DotenvConfig() {
         // Load .env file from the root directory (adjust the path accordingly)

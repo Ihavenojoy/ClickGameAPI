@@ -12,5 +12,7 @@ WORKDIR /app
 COPY --from=builder /build/api/target/*.jar app.jar
 COPY .env /app/.env
 
+ENV SPRING_PROFILES_ACTIVE=docker
+
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar", "--debug"]
