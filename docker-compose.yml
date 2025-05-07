@@ -5,9 +5,11 @@ services:
     container_name: minio
     ports:
       - "9000:9000"
+    env_file:
+      - .env
     environment:
-      MINIO_ACCESS_KEY: your-access-key
-      MINIO_SECRET_KEY: your-secret-key
+      MINIO_ACCESS_KEY: ${MINIO_ACCESS_KEY}
+      MINIO_SECRET_KEY: ${MINIO_SECRET_KEY}
     command: server /data
 
   java-app:
@@ -17,6 +19,8 @@ services:
       - minio
       - dragonfly
       - mysql
+    env_file:
+      - .env
     secrets:
       - keystore.p12
       - minio_access_key.txt
@@ -27,20 +31,24 @@ services:
   dragonfly:
     image: dragonflyio/dragonfly
     container_name: dragonfly
+    env_file:
+      - .env
+    environment:
+      DRAGONFLY_PASSWORD: ${DRAGONFLY_PASSWORD}
     ports:
       - "${DRAGONFLY_PORT}:${DRAGONFLY_PORT}"
-    environment:
-      DRAGONFLY_PASSWORD: your-dragonfly-password
     command: start
 
   mysql:
     image: mysql:8
     container_name: mysql
+    env_file:
+      - .env
     environment:
-      MYSQL_ROOT_PASSWORD: your-root-password
-      MYSQL_DATABASE: your-database
-      MYSQL_USER: your-user
-      MYSQL_PASSWORD: your-password
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     ports:
       - "${MYSQL_PORT}:${MYSQL_PORT}"
     volumes:
