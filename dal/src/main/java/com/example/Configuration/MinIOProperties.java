@@ -19,9 +19,7 @@ public class MinIOProperties {
         return accessKey;
     }
 
-    public void setAccessKey(String accessKey) {
-        this.accessKey = accessKey;
-    }
+    public void setAccessKey(String accessKey) {this.accessKey = accessKey;}
 
     public String getSecretKey() {
         return secretKey;
