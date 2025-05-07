@@ -22,7 +22,7 @@ jobs:
 
     - name: Build and push Docker image
       run: |
-        IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/ClickGameAPI
+        IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/clickgameapi
         TAG=latest
 
         docker build -t $IMAGE_NAME:$TAG .
