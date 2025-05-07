@@ -63,7 +63,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.example.clickerapi.ClickerApiApplication</mainClass>
+                    <mainClass>com.example.api.ApiApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>
