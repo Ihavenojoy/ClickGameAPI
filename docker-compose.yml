@@ -1,0 +1,10 @@
+version: '3'
+services:
+  api:
+    image: your-api-image
+    environment:
+      - SSL_KEYSTORE_PASSWORD=PassWord60
+      - MINIO_ACCESS_KEY=vaUy3l83PxT9Mw3COfKf
+      - MINIO_SECRET_KEY=rX5ol0jGOnAqasrACBF1wQ4KPqeLdmP3wquU4mXR
+    ports:
+      - "8080:8080"
