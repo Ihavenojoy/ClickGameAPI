@@ -21,12 +21,15 @@ services:
       - mysql
     env_file:
       - .env
+    environment:
+      SSL_KEYSTORE_PASSWORD: ${SSL_KEYSTORE_PASSWORD}
     secrets:
       - keystore.p12
       - minio_access_key.txt
       - minio_secret_key.txt
     ports:
       - "8080:8080"
+
 
   dragonfly:
     image: dragonflyio/dragonfly
