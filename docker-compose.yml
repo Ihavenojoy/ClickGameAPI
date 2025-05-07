@@ -1,15 +1,57 @@
 version: '3.8'
 services:
-  api:
-    image: your-api-image
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+    environment:
+      MINIO_ACCESS_KEY: your-access-key
+      MINIO_SECRET_KEY: your-secret-key
+    command: server /data
+
+  java-app:
+    image: your-java-app
+    container_name: java-app
+    environment:
+      MINIO_ENDPOINT: minio:9000
+      MINIO_ACCESS_KEY: your-access-key
+      MINIO_SECRET_KEY: your-secret-key
+      SSL_KEYSTORE_PASSWORD: ${SSL_KEYSTORE_PASSWORD}
+      DRAGONFLY_PORT: ${DRAGONFLY_PORT}
+      MYSQL_PORT: ${MYSQL_PORT}
+    depends_on:
+      - minio
+      - dragonfly
+      - mysql
     secrets:
       - keystore.p12
       - minio_access_key.txt
       - minio_secret_key.txt
-    environment:
-      - SSL_KEYSTORE_PASSWORD=${SSL_KEYSTORE_PASSWORD}
     ports:
       - "8080:8080"
+
+  dragonfly:
+    image: dragonflyio/dragonfly
+    container_name: dragonfly
+    ports:
+      - "${DRAGONFLY_PORT}:${DRAGONFLY_PORT}"
+    environment:
+      DRAGONFLY_PASSWORD: your-dragonfly-password
+    command: start
+
+  mysql:
+    image: mysql:8
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: your-root-password
+      MYSQL_DATABASE: your-database
+      MYSQL_USER: your-user
+      MYSQL_PASSWORD: your-password
+    ports:
+      - "${MYSQL_PORT}:${MYSQL_PORT}"
+    volumes:
+      - mysql-data:/var/lib/mysql
 
 secrets:
   keystore.p12:
@@ -18,3 +60,6 @@ secrets:
     external: true
   minio_secret_key.txt:
     external: true
+
+volumes:
+  mysql-data:

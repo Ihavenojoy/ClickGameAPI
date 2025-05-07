@@ -13,9 +13,10 @@ import org.springframework.scheduling.annotation.EnableAsync;
 public class DragonflyConfiguration {
     @Bean
     public LettuceConnectionFactory DragonFlyConnectionFactory() {
+        int dragonflyPort = Integer.parseInt(System.getProperty("DRAGONFLY_PORT"));
         final RedisStandaloneConfiguration config = new RedisStandaloneConfiguration();
         config.setHostName("host.docker.internal");
-        config.setPort(6379);
+        config.setPort(dragonflyPort);
 
         return new LettuceConnectionFactory(config);
     }
