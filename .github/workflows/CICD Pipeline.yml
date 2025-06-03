@@ -1,0 +1,131 @@
+name: Full CI Pipeline
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  schedule:
+    - cron: '18 7 * * 3'   # Bearer
+    - cron: '19 15 * * 1'  # CodeQL
+    - cron: '32 17 * * 2'  # OSV
+
+permissions:
+  contents: read
+  security-events: write
+  actions: read
+  packages: read
+
+jobs:
+
+  bearer-scan:
+    name: Bearer Scan
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event.schedule == '18 7 * * 3'
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run Report
+        id: report
+        uses: bearer/bearer-action@828eeb928ce2f4a7ca5ed57fb8b59508cb8c79bc
+        with:
+          api-key: ${{ secrets.BEARER_TOKEN }}
+          format: sarif
+          output: results.sarif
+          exit-code: 0
+
+      - name: Validate SARIF file
+        run: |
+          if jq '.runs[0].results == null' results.sarif; then
+            echo "No results found, initializing results array."
+            jq '.runs[0].results = []' results.sarif > temp.sarif && mv temp.sarif results.sarif
+          fi
+        continue-on-error: true
+
+      - name: Upload SARIF file
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: results.sarif
+
+  codeql-scan:
+    name: CodeQL (${{ matrix.language }})
+    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - language: actions
+            build-mode: none
+          - language: java-kotlin
+            build-mode: none
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: ${{ matrix.build-mode }}
+
+      - if: matrix.build-mode == 'manual'
+        shell: bash
+        run: |
+          echo 'Replace this with your manual build commands if needed.'
+          exit 1
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{matrix.language}}"
+
+  osv-scan:
+    name: OSV-Scanner
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'schedule' || github.event_name == 'push'
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@1f1242919d8a60496dd1874b24b62b2370ed4c78"
+    with:
+      scan-args: |
+        -r
+        --skip-git
+        ./
+
+  osv-scan-pr:
+    name: OSV-Scanner PR Check
+    if: github.event_name == 'pull_request' || github.event_name == 'merge_group'
+    uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable-pr.yml@1f1242919d8a60496dd1874b24b62b2370ed4c78"
+    with:
+      scan-args: |
+        -r
+        --skip-git
+        ./
+
+  java-tests:
+    name: Run JUnit Tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: Cache Maven dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build and run tests
+        run: mvn clean verify
+
+      - name: Upload test report (optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: junit-test-results
+          path: target/surefire-reports
