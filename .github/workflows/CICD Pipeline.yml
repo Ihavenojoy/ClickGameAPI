@@ -21,7 +21,6 @@ jobs:
   bearer-scan:
     name: Bearer Scan
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event.schedule == '18 7 * * 3'
     steps:
       - uses: actions/checkout@v4
       - name: Run Report
@@ -47,7 +46,7 @@ jobs:
           sarif_file: results.sarif
 
   codeql-scan:
-    name: CodeQL (${{ matrix.language }})
+    name: CodeQL Scan (${{ matrix.language }})
     runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
     strategy:
       fail-fast: false
@@ -57,6 +56,8 @@ jobs:
             build-mode: none
           - language: java-kotlin
             build-mode: none
+    outputs:
+      job-status: ${{ steps.analyze.outcome }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -70,10 +71,11 @@ jobs:
       - if: matrix.build-mode == 'manual'
         shell: bash
         run: |
-          echo 'Replace this with your manual build commands if needed.'
+          echo 'Manual build placeholder'
           exit 1
 
       - name: Perform CodeQL Analysis
+        id: analyze
         uses: github/codeql-action/analyze@v3
         with:
           category: "/language:${{matrix.language}}"
@@ -81,6 +83,7 @@ jobs:
   osv-scan:
     name: OSV-Scanner
     if: github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'schedule' || github.event_name == 'push'
+    continue-on-error: true
     uses: "google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@1f1242919d8a60496dd1874b24b62b2370ed4c78"
     with:
       scan-args: |
@@ -129,3 +132,41 @@ jobs:
         with:
           name: junit-test-results
           path: target/surefire-reports
+
+notify-osv-failure:
+  name: Notify on OSV Scan Failure (GitHub PR Comment)
+  runs-on: ubuntu-latest
+  needs: osv-scan
+  if: needs.osv-scan.result == 'failure'
+  steps:
+    - name: Post comment on PR about OSV scan failure
+      uses: peter-evans/create-or-update-comment@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        issue-number: ${{ github.event.pull_request.number }}
+        body: |
+          ⚠️ **OSV Scanner found vulnerabilities or errors.**
+          Please review the OSV scan results and take action.
+          
+
+  build-and-push:
+    name: Docker Image CI
+    runs-on: ubuntu-latest
+    needs: [java-tests, bearer-scan, codeql-scan]
+    if: success()
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Build and push Docker image
+        run: |
+          IMAGE_NAME=${{ secrets.DOCKER_USERNAME }}/clickgameapi
+          TAG=latest
+          docker build -t $IMAGE_NAME:$TAG .
+          docker push $IMAGE_NAME:$TAG
