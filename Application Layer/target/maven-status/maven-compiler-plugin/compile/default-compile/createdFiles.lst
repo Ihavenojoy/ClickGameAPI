@@ -1,0 +1,4 @@
+com\example\Interfaces\IUser.class
+com\example\Interfaces\IDragonfly.class
+com\example\Interfaces\IMinIO.class
+com\example\DTO\UserRegistrationDTO.class

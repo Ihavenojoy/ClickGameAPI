@@ -14,6 +14,7 @@ import java.util.concurrent.Executor;
 
 @RestController
 @RequestMapping("/image")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ImageController {
 
     private ImageService imageService;

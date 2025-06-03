@@ -41,6 +41,12 @@ public class Click {
         }
         return CompletableFuture.completedFuture(null);
     }
+    @Async
+    public CompletableFuture<Void> Passive(int passiveincome)
+    {
+        clickvalue += passiveincome;
+        return CompletableFuture.completedFuture(null);
+    }
 
     public int getClickvalue() { return clickvalue; }
     public void setClickvalue(int clickvalue) { this.clickvalue = clickvalue; }

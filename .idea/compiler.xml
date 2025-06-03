@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="CompilerConfiguration">
+    <option name="USE_RELEASE_OPTION" value="false" />
     <annotationProcessing>
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
@@ -12,14 +13,10 @@
         <module name="Application_Layer" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="Bussines_Layer" target="17" />
-    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
       <module name="Application_Layer" options="-parameters" />
-      <module name="Bussines_Layer" options="-parameters" />
       <module name="ClickerAPI" options="" />
       <module name="api" options="-parameters" />
       <module name="business" options="-parameters" />

@@ -1,0 +1,16 @@
+com\example\Services\ImageService.class
+com\example\Models\ClickPassive.class
+com\example\Models\UserRegistration.class
+com\example\Scheduler\PassiveUpdateScheduler.class
+com\example\Mappers\ClickMapper.class
+com\example\Models\User.class
+com\example\Services\PassiveService.class
+com\example\Mappers\ClickPassiveMapper.class
+com\example\Services\BuildingService.class
+com\example\Services\UserService.class
+com\example\Models\Building.class
+com\example\Models\Click.class
+com\example\Services\StoreService.class
+com\example\Mappers\UserMapper.class
+com\example\Scheduler\PassiveScheduledTask.class
+com\example\Services\ClickService.class
