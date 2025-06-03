@@ -81,16 +81,20 @@ jobs:
           category: "/language:${{matrix.language}}"
 
   osv-scan:
-    name: OSV-Scanner
+    name: OSV Scanner
     uses: google/osv-scanner-action/.github/workflows/osv-scanner-reusable.yml@1f1242919d8a60496dd1874b24b62b2370ed4c78
-    if: github.event_name == 'pull_request' || github.event_name == 'merge_group' || github.event_name == 'schedule' || github.event_name == 'push'
-    continue-on-error: true
+    if: |
+      github.event_name == 'pull_request' ||
+      github.event_name == 'merge_group' ||
+      github.event_name == 'schedule' ||
+      github.event_name == 'push'
     with:
       scan-args: |
         -r
         --skip-git
         ./
     secrets: inherit
+
 
   osv-scan-pr:
     name: OSV-Scanner PR Check
