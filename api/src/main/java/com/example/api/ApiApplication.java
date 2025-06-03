@@ -21,7 +21,6 @@ import java.net.URI;
 
 @SpringBootApplication(scanBasePackages = {"com.example.api", "com.example.Services"})
 @EnableAsync
-@PropertySource("classpath:application.properties")
 @EnableConfigurationProperties(MinIOProperties.class)
 @EnableScheduling
 @EnableWebMvc
