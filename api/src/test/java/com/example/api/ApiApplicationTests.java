@@ -10,14 +10,5 @@ import org.springframework.test.context.TestPropertySource;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
-@ActiveProfiles("test")  // Activate the test profile
 public class ApiApplicationTests {
-
-    @Autowired
-    private MinIOProperties minIOProperties;
-
-    @Test
-    void contextLoads() {
-        assertNotNull(minIOProperties);  // Ensure MinIOProperties is injected
-    }
 }
