@@ -1,6 +1,7 @@
 package com.example.Services;
 
 import com.example.Interfaces.IMinIO;
+import com.example.Models.ImageObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -8,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import static org.apache.commons.io.FileUtils.getFile;
 
 @Service
 public class ImageService {
@@ -35,17 +38,19 @@ public class ImageService {
         return minioService.getFile(objectKey, UserBucketName);
     }
 
-    public List<byte[]> getAllUserImages(String folderPrefix) throws Exception {
+    public List<ImageObject> getAllUserImages(String folderPrefix) throws Exception {
         List<String> imageNames = minioService.getImageNames(UserBucketName, folderPrefix);
 
-        List<byte[]> imageBytesList = new ArrayList<>();
+        List<ImageObject> imageBytesList = new ArrayList<>();
 
         for (String imageName : imageNames) {
             String objectKey = folderPrefix + "/" + imageName;
-            byte[] imageBytes = minioService.getFile(objectKey, UserBucketName);
-            imageBytesList.add(imageBytes);
+            ImageObject image = new ImageObject();
+            image.setName(imageName);
+            image.setImageData(minioService.getFile(objectKey, UserBucketName));
+            imageBytesList.add(image);
         }
 
-        return imageBytesList;
+        return imageBytesList;  // Return the list of ImageObject, no cast needed
     }
 }

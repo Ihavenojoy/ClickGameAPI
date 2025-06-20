@@ -1,5 +1,6 @@
 package com.example.api.controller;
 
+import com.example.Models.ImageObject;
 import com.example.Services.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -32,10 +33,9 @@ public class ImageController {
             @RequestParam("userId") int userId,
             @RequestParam("filename") String filename,
             @RequestParam("file") MultipartFile file,  // MultipartFile for file upload
-            @RequestParam("contentype") String contentype) throws IOException
-    {
+            @RequestParam("contentype") String contentype) throws IOException {
         InputStream inputStream = file.getInputStream();
-        return imageService.UserUploadImage(userId, filename, inputStream , contentype);
+        return imageService.UserUploadImage(userId, filename, inputStream, contentype);
     }
 
     @GetMapping("/userimages/{userId}/{filename}")
@@ -48,26 +48,15 @@ public class ImageController {
             @RequestParam("userId") int userId,
             @RequestParam("filename") String filename,
             @RequestParam("file") MultipartFile file,  // MultipartFile for file upload
-            @RequestParam("contentype") String contentype) throws IOException
-    {
+            @RequestParam("contentype") String contentype) throws IOException {
         System.out.println("Hello");
         InputStream inputStream = file.getInputStream();
-        return imageService.UserUploadImage(userId, filename, inputStream , contentype);
+        return imageService.UserUploadImage(userId, filename, inputStream, contentype);
     }
 
-    //Verander dit naar een model waar de byte (image) en String (key) in zit en list deze dan
     @GetMapping("/getalluserimages/{userid}")
-    public ResponseEntity<List<byte[]>> getAllUserImages(
-            @PathVariable String userid) {
-        try {
-            // Call the service to get images as byte arrays for the user
-            List<byte[]> images = imageService.getAllUserImages(userid);
-
-            // Return the list of byte arrays representing the images
-            return ResponseEntity.ok(images);
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(null);  // Handle any exceptions gracefully
-        }
+    public List<ImageObject> getAllUserImages(@PathVariable String userid) throws Exception {
+        return imageService.getAllUserImages(userid);
     }
-
 }
+

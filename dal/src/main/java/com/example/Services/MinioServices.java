@@ -66,7 +66,11 @@ public class MinioServices implements IMinIO {
     public List<String> getImageNames(String bucketName, String folderPrefix) throws Exception {
         List<String> fileNames = new ArrayList<>();
 
-        // Use the AWS SDK's listObjectsV2 without the delimiter for recursive listing
+        // Ensure prefix ends with a slash (to only get files "under" that folder)
+        if (!folderPrefix.endsWith("/")) {
+            folderPrefix += "/";
+        }
+
         ListObjectsV2Request listObjects = ListObjectsV2Request.builder()
                 .bucket(bucketName)
                 .prefix(folderPrefix)
@@ -74,15 +78,18 @@ public class MinioServices implements IMinIO {
 
         ListObjectsV2Response response = s3Client.listObjectsV2(listObjects);
 
-        // Iterate over the objects in the response
         for (S3Object s3Object : response.contents()) {
-            String fileName = s3Object.key();
+            String key = s3Object.key();
 
-            // Remove the prefix (subfolder) from the file name and also remove any leading slash
-            fileName = fileName.replaceFirst("^" + folderPrefix, "");
-            fileName = fileName.replaceFirst("^/", ""); // Remove the leading slash if it exists
+            // Only strip the folder prefix if the key starts with it
+            if (key.startsWith(folderPrefix)) {
+                String fileName = key.substring(folderPrefix.length());
 
-            fileNames.add(fileName);
+                // Skip if it's a "folder" entry or empty name
+                if (!fileName.isEmpty() && !fileName.endsWith("/")) {
+                    fileNames.add(fileName);
+                }
+            }
         }
 
         return fileNames;
